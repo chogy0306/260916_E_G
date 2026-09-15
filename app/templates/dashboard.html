@@ -21,15 +21,9 @@
 {% if summary %}
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-3">
-    <div class="stat-card stat-neutral">
-      <div class="stat-label">직원수</div>
-      <div class="stat-value">{{ summary.total_employees }}<span class="stat-unit">명</span></div>
-    </div>
-  </div>
-  <div class="col-6 col-md-3">
-    <div class="stat-card stat-success">
-      <div class="stat-label">정상</div>
-      <div class="stat-value">{{ summary.normal }}<span class="stat-unit">건</span></div>
+    <div class="stat-card stat-danger">
+      <div class="stat-label">오류</div>
+      <div class="stat-value">{{ summary.error }}<span class="stat-unit">건</span></div>
     </div>
   </div>
   <div class="col-6 col-md-3">
@@ -39,9 +33,15 @@
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="stat-card stat-danger">
-      <div class="stat-label">오류</div>
-      <div class="stat-value">{{ summary.error }}<span class="stat-unit">건</span></div>
+    <div class="stat-card stat-success">
+      <div class="stat-label">정상</div>
+      <div class="stat-value">{{ summary.normal }}<span class="stat-unit">건</span></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card stat-neutral">
+      <div class="stat-label">직원수</div>
+      <div class="stat-value">{{ summary.total_employees }}<span class="stat-unit">명</span></div>
     </div>
   </div>
 </div>

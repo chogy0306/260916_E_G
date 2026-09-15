@@ -16,10 +16,10 @@ DEFAULT_RULES = [
     ("RATE_TOTAL_EARNINGS", "총지급액 변동 기준", 20.0, "WARNING"),
     ("RATE_NET_SALARY", "실지급액 변동 기준", 20.0, "WARNING"),
     ("RATE_OTHER_ITEM", "기타 급여 항목 변동 기준", 30.0, "REVIEW"),
-    ("INSURANCE_RATE_NATIONAL_PENSION", "국민연금 요율(%)", 4.5, "REVIEW"),
-    ("INSURANCE_RATE_HEALTH", "건강보험 요율(%)", 3.545, "REVIEW"),
-    ("INSURANCE_RATE_LONG_TERM_CARE", "장기요양보험 요율(%)", 0.4591, "REVIEW"),
-    ("INSURANCE_RATE_EMPLOYMENT", "고용보험 요율(%)", 0.9, "REVIEW"),
+    ("INSURANCE_RATE_NATIONAL_PENSION", "국민연금 요율(%, 기본급 대비)", 4.75, "REVIEW"),
+    ("INSURANCE_RATE_HEALTH", "건강보험 요율(%, 기본급 대비)", 3.595, "REVIEW"),
+    ("INSURANCE_RATE_LONG_TERM_CARE", "장기요양보험 요율(%, 건강보험료 대비)", 13.14, "REVIEW"),
+    ("INSURANCE_RATE_EMPLOYMENT", "고용보험 요율(%, 기본급 대비)", 0.9, "REVIEW"),
 ]
 
 

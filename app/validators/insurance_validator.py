@@ -9,6 +9,16 @@ RATE_RULE_FOR_ITEM = {
     "employment_insurance": "INSURANCE_RATE_EMPLOYMENT",
 }
 
+# Most items are a % of base salary, but 장기요양보험료 is legally defined as a
+# % of the *건강보험료* itself (13.14% of the health-insurance premium as of
+# 2026), not of salary directly.
+RATE_BASE_FOR_ITEM = {
+    "pension": "base_salary",
+    "health_insurance": "base_salary",
+    "employment_insurance": "base_salary",
+    "long_term_care": "health_insurance",
+}
+
 
 def check(employees, values_by_employee, prev_values_by_employee_id, rules_by_code=None):
     """prev_values_by_employee_id: {employee_id(business key): {item: value}}"""
@@ -17,7 +27,6 @@ def check(employees, values_by_employee, prev_values_by_employee_id, rules_by_co
     for emp in employees:
         items = values_by_employee.get(emp.id, {})
         prev_items = prev_values_by_employee_id.get(emp.employee_id, {})
-        base_salary = items.get("base_salary")
 
         mapped_insurance_items = [i for i in INSURANCE_ITEMS if i in items or i in prev_items]
         if not mapped_insurance_items:
@@ -78,8 +87,9 @@ def check(employees, values_by_employee, prev_values_by_employee_id, rules_by_co
                     )
 
             rate_rule = rules_by_code.get(RATE_RULE_FOR_ITEM.get(item))
-            if rate_rule and rate_rule.is_active and base_salary and current is not None:
-                expected = base_salary * rate_rule.threshold / 100
+            base_amount = items.get(RATE_BASE_FOR_ITEM.get(item, "base_salary"))
+            if rate_rule and rate_rule.is_active and base_amount and current is not None:
+                expected = base_amount * rate_rule.threshold / 100
                 tolerance = max(1000, expected * 0.02)
                 if abs(current - expected) > tolerance:
                     findings.append(

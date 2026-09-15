@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}대시보드{% endblock %}
+{% block content %}
+
+{% if not has_data %}
+<div class="text-center py-5">
+  <h3 class="mb-3">아직 업로드된 급여대장이 없습니다.</h3>
+  {% if current_user.is_admin() %}
+  <a href="{{ url_for('upload.new_upload') }}" class="btn btn-primary">급여대장 업로드하기</a>
+  {% endif %}
+</div>
+{% else %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>{{ latest.period_label }} 급여대장 검증</h2>
+  {% if current_user.is_admin() %}
+  <a href="{{ url_for('upload.new_upload') }}" class="btn btn-outline-primary">새 급여대장 업로드</a>
+  {% endif %}
+</div>
+
+{% if summary %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="text-muted small">직원수</div>
+      <div class="fs-3">{{ summary.total_employees }}명</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3 border-success">
+      <div class="text-muted small">정상</div>
+      <div class="fs-3 text-success">{{ summary.normal }}건</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3 border-warning">
+      <div class="text-muted small">확인필요 / 경고</div>
+      <div class="fs-3 text-warning">{{ summary.review }} / {{ summary.warning }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3 border-danger">
+      <div class="text-muted small">오류</div>
+      <div class="fs-3 text-danger">{{ summary.error }}건</div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h5>주요 이상치 (상위 10건)</h5>
+  <a href="{{ url_for('validation.results', upload_id=latest.id) }}" class="btn btn-sm btn-primary">전체 결과 보기</a>
+</div>
+<table class="table table-hover bg-white">
+  <thead>
+    <tr><th>등급</th><th>직원</th><th>구분</th><th>내용</th></tr>
+  </thead>
+  <tbody>
+    {% for r in top_errors %}
+    <tr>
+      <td>
+        {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
+        {{ r.severity }}
+      </td>
+      <td>{{ r.employee.employee_name if r.employee else '-' }}</td>
+      <td>{{ r.category }}</td>
+      <td><a href="{{ url_for('validation.detail', result_id=r.id) }}">{{ r.message }}</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="text-center text-muted">이상치가 없습니다.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">
+  이 급여대장은 아직 검증되지 않았습니다.
+  {% if current_user.is_admin() %}
+  <a href="{{ url_for('upload.select_previous', upload_id=latest.id) }}">검증 시작하기</a>
+  {% endif %}
+</div>
+{% endif %}
+
+<h5 class="mt-5">검증 이력</h5>
+<table class="table bg-white">
+  <thead><tr><th>연월</th><th>상태</th><th>파일명</th><th></th></tr></thead>
+  <tbody>
+    {% for u in uploads %}
+    <tr>
+      <td>{{ u.period_label }}</td>
+      <td>{{ u.status }}</td>
+      <td>{{ u.file_name }}</td>
+      <td>
+        {% if u.status == 'VALIDATED' %}
+        <a href="{{ url_for('validation.results', upload_id=u.id) }}" class="btn btn-sm btn-outline-primary">결과보기</a>
+        {% elif current_user.is_admin() %}
+        <a href="{{ url_for('upload.select_previous', upload_id=u.id) }}" class="btn btn-sm btn-outline-secondary">검증하기</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endif %}
+{% endblock %}

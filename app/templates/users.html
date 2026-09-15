@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}사용자 관리{% endblock %}
+{% block content %}
+<h2 class="mb-4">사용자 관리</h2>
+
+<div class="card p-4 mb-4">
+  <h5>새 계정 추가</h5>
+  <form method="post" action="{{ url_for('users.create') }}" class="row g-2 align-items-end">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="col-md-3">
+      <label class="form-label">아이디</label>
+      <input type="text" name="username" class="form-control" required />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">비밀번호</label>
+      <input type="password" name="password" class="form-control" required />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">권한</label>
+      <select name="role" class="form-select">
+        <option value="viewer">일반 사용자 (조회만 가능)</option>
+        <option value="admin">관리자</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">추가</button>
+    </div>
+  </form>
+</div>
+
+<table class="table bg-white">
+  <thead><tr><th>아이디</th><th>권한</th><th>상태</th><th>가입일</th><th></th></tr></thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.username }}{% if user.id == current_user.id %} <span class="badge bg-secondary">나</span>{% endif %}</td>
+      <td>
+        <form method="post" action="{{ url_for('users.change_role', user_id=user.id) }}" class="d-flex gap-2">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="viewer" {{ 'selected' if user.role == 'viewer' else '' }}>일반 사용자</option>
+            <option value="admin" {{ 'selected' if user.role == 'admin' else '' }}>관리자</option>
+          </select>
+        </form>
+      </td>
+      <td>
+        {% if user.is_active_user %}
+        <span class="badge bg-success">활성</span>
+        {% else %}
+        <span class="badge bg-secondary">비활성</span>
+        {% endif %}
+      </td>
+      <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '-' }}</td>
+      <td>
+        <form method="post" action="{{ url_for('users.toggle_active', user_id=user.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit" class="btn btn-sm btn-outline-secondary">
+            {{ '비활성화' if user.is_active_user else '활성화' }}
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

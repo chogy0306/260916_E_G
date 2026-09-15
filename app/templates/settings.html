@@ -16,7 +16,7 @@
       <td style="width:140px">
         <select form="rule-form-{{ rule.id }}" name="severity" class="form-select">
           {% for s in ['ERROR', 'WARNING', 'REVIEW'] %}
-          <option value="{{ s }}" {{ 'selected' if rule.severity == s else '' }}>{{ s }}</option>
+          <option value="{{ s }}" {{ 'selected' if rule.severity == s else '' }}>{{ s|severity_label }}</option>
           {% endfor %}
         </select>
       </td>

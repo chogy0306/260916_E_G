@@ -11,7 +11,7 @@
     <select name="severity" class="form-select">
       <option value="">전체 등급</option>
       {% for s in ['ERROR', 'WARNING', 'REVIEW'] %}
-      <option value="{{ s }}" {{ 'selected' if severity == s else '' }}>{{ s }}</option>
+      <option value="{{ s }}" {{ 'selected' if severity == s else '' }}>{{ s|severity_label }}</option>
       {% endfor %}
     </select>
   </div>
@@ -19,7 +19,7 @@
     <select name="status" class="form-select">
       <option value="">전체 상태</option>
       {% for s in ['NEW', 'REVIEWING', 'CONFIRMED', 'FALSE_POSITIVE', 'RESOLVED'] %}
-      <option value="{{ s }}" {{ 'selected' if status == s else '' }}>{{ s }}</option>
+      <option value="{{ s }}" {{ 'selected' if status == s else '' }}>{{ s|result_status_label }}</option>
       {% endfor %}
     </select>
   </div>
@@ -42,11 +42,11 @@
         {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
       </td>
       <td>{{ r.employee.employee_name if r.employee else '-' }}</td>
-      <td><a href="{{ url_for('validation.detail', result_id=r.id) }}">{{ r.field_name or r.category }}</a></td>
-      <td class="text-end">{{ '%.0f'|format(r.previous_value) if r.previous_value is not none else '-' }}</td>
-      <td class="text-end">{{ '%.0f'|format(r.current_value) if r.current_value is not none else '-' }}</td>
+      <td><a href="{{ url_for('validation.detail', result_id=r.id) }}">{{ (r.field_name|field_label) if r.field_name else r.category }}</a></td>
+      <td class="text-end">{{ r.previous_value|commas }}</td>
+      <td class="text-end">{{ r.current_value|commas }}</td>
       <td class="text-end">{{ '%.1f'|format(r.change_rate) + '%' if r.change_rate is not none else '-' }}</td>
-      <td>{{ r.status }}</td>
+      <td>{{ r.status|result_status_label }}</td>
     </tr>
     {% else %}
     <tr><td colspan="7" class="text-center text-muted">조건에 맞는 결과가 없습니다.</td></tr>

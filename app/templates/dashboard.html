@@ -59,7 +59,7 @@
     <tr>
       <td>
         {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
-        {{ r.severity }}
+        {{ r.severity|severity_label }}
       </td>
       <td>{{ r.employee.employee_name if r.employee else '-' }}</td>
       <td>{{ r.category }}</td>
@@ -86,7 +86,7 @@
     {% for u in uploads %}
     <tr>
       <td>{{ u.period_label }}</td>
-      <td>{{ u.status }}</td>
+      <td>{{ u.status|upload_status_label }}</td>
       <td>{{ u.file_name }}</td>
       <td>
         {% if u.status == 'VALIDATED' %}

@@ -270,34 +270,27 @@ a:hover {
   padding: 2.5rem 2.25rem;
 }
 
-.login-brand {
+.login-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 10px;
+  margin-bottom: 2rem;
 }
 
-.login-brand-mark {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
+.login-logo-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
   background: var(--etners-orange);
   flex: none;
 }
 
-.login-brand-name {
-  font-size: 1.15rem;
+.login-logo-text {
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--etners-dark);
-  letter-spacing: -0.01em;
-}
-
-.login-subtitle {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-bottom: 1.75rem;
+  letter-spacing: -0.02em;
 }
 
 .login-card .form-label {

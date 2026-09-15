@@ -235,7 +235,9 @@ def ai_analysis(result_id):
 def download_results(upload_id):
     upload = PayrollUpload.query.get_or_404(upload_id)
     items = ValidationResult.query.filter_by(upload_id=upload.id).all()
-    buffer = build_results_excel(items)
+    groups, unassigned = _group_by_employee(items, [])
+    ordered_items = [r for group in groups for r in group["results"]] + unassigned
+    buffer = build_results_excel(ordered_items)
     return send_file(
         buffer,
         as_attachment=True,

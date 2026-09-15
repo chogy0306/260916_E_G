@@ -255,42 +255,55 @@ a:hover {
 }
 
 .login-wrapper {
-  min-height: calc(100vh - 4rem);
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: radial-gradient(120% 100% at 50% 0%, #3d2b20 0%, #201813 45%, #131010 100%);
 }
 
 .login-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 360px;
   background: var(--surface);
-  border-radius: 20px;
-  box-shadow: var(--shadow-md);
-  padding: 2.5rem 2.25rem;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  padding: 2.25rem 2rem;
 }
 
-.login-logo {
+.login-logo-row {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  margin-bottom: 2rem;
-}
-
-.login-logo-mark {
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  background: var(--etners-orange);
-  flex: none;
+  margin-bottom: 1.5rem;
 }
 
 .login-logo-text {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  color: var(--etners-dark);
+  color: var(--etners-orange);
   letter-spacing: -0.02em;
+}
+
+.login-logo-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  flex: none;
+}
+
+.login-logo-product {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.login-heading {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
 .login-card .form-label {

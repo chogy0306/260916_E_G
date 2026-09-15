@@ -3,10 +3,12 @@
 {% block content %}
 <div class="login-wrapper">
   <div class="login-card">
-    <div class="login-logo">
-      <span class="login-logo-mark"></span>
-      <span class="login-logo-text">이트너스</span>
+    <div class="login-logo-row">
+      <span class="login-logo-text">etners</span>
+      <span class="login-logo-divider"></span>
+      <span class="login-logo-product">급여대장 자동 검증</span>
     </div>
+    <h2 class="login-heading">로그인</h2>
 
     {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
     <form method="post">

@@ -40,6 +40,21 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
+.navbar-logo-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  padding: 5px 10px;
+  line-height: 0;
+}
+
+.navbar-logo-img {
+  height: 16px;
+  width: auto;
+  display: block;
+}
+
 .navbar .nav-link {
   color: rgba(255, 255, 255, 0.75) !important;
   font-weight: 500;

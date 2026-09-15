@@ -255,13 +255,10 @@ a:hover {
 }
 
 .login-wrapper {
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  min-height: 100vh;
+  min-height: calc(100vh - 4rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(120% 100% at 50% 0%, #3d2b20 0%, #201813 45%, #131010 100%);
 }
 
 .login-card {
@@ -269,7 +266,8 @@ a:hover {
   max-width: 360px;
   background: var(--surface);
   border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  border-top: 4px solid var(--etners-orange);
+  box-shadow: var(--shadow-md);
   padding: 2.25rem 2rem;
 }
 

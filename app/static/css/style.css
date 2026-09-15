@@ -278,11 +278,9 @@ a:hover {
   margin-bottom: 1.5rem;
 }
 
-.login-logo-text {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--etners-orange);
-  letter-spacing: -0.02em;
+.login-logo-image {
+  height: 20px;
+  width: auto;
 }
 
 .login-logo-divider {

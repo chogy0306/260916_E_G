@@ -21,27 +21,27 @@
 {% if summary %}
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-3">
-    <div class="card text-center p-3">
-      <div class="text-muted small">직원수</div>
-      <div class="fs-3">{{ summary.total_employees }}명</div>
+    <div class="stat-card stat-neutral">
+      <div class="stat-label">직원수</div>
+      <div class="stat-value">{{ summary.total_employees }}<span class="stat-unit">명</span></div>
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="card text-center p-3 border-success">
-      <div class="text-muted small">정상</div>
-      <div class="fs-3 text-success">{{ summary.normal }}건</div>
+    <div class="stat-card stat-success">
+      <div class="stat-label">정상</div>
+      <div class="stat-value">{{ summary.normal }}<span class="stat-unit">건</span></div>
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="card text-center p-3 border-warning">
-      <div class="text-muted small">확인필요 / 경고</div>
-      <div class="fs-3 text-warning">{{ summary.review }} / {{ summary.warning }}</div>
+    <div class="stat-card stat-warning">
+      <div class="stat-label">확인필요 / 경고</div>
+      <div class="stat-value">{{ summary.review }} / {{ summary.warning }}</div>
     </div>
   </div>
   <div class="col-6 col-md-3">
-    <div class="card text-center p-3 border-danger">
-      <div class="text-muted small">오류</div>
-      <div class="fs-3 text-danger">{{ summary.error }}건</div>
+    <div class="stat-card stat-danger">
+      <div class="stat-label">오류</div>
+      <div class="stat-value">{{ summary.error }}<span class="stat-unit">건</span></div>
     </div>
   </div>
 </div>
@@ -58,8 +58,10 @@
     {% for r in top_errors %}
     <tr>
       <td class="text-nowrap">
-        {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
-        {{ r.severity|severity_label }}
+        <span class="severity-pill severity-{{ r.severity|lower }}">
+          {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
+          {{ r.severity|severity_label }}
+        </span>
       </td>
       <td class="text-nowrap">{{ r.employee.employee_name if r.employee else '-' }}</td>
       <td class="text-nowrap">{{ r.category }}</td>

@@ -39,7 +39,10 @@
     {% for r in items %}
     <tr>
       <td>
-        {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
+        <span class="severity-pill severity-{{ r.severity|lower }}">
+          {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
+          {{ r.severity|severity_label }}
+        </span>
       </td>
       <td>{{ r.employee.employee_name if r.employee else '-' }}</td>
       <td>
@@ -50,12 +53,12 @@
       <td class="text-end">{{ r.previous_value|commas }}</td>
       <td class="text-end">{{ r.current_value|commas }}</td>
       <td class="text-end">{{ '%.1f'|format(r.change_rate) + '%' if r.change_rate is not none else '-' }}</td>
-      <td>{{ r.status|result_status_label }}</td>
+      <td><span class="status-pill">{{ r.status|result_status_label }}</span></td>
     </tr>
     {% endfor %}
     {% for r in normal_rows %}
-    <tr class="table-success">
-      <td>🟢 정상</td>
+    <tr>
+      <td><span class="severity-pill severity-normal">🟢 정상</span></td>
       <td>{{ r.employee.employee_name }}</td>
       <td>정상 (변동 없음)</td>
       <td class="text-end">-</td>

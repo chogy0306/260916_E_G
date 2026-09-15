@@ -1,0 +1,11 @@
+{% macro severity_help() %}
+<span class="info-tip" tabindex="0">
+  ?
+  <span class="info-tip-box">
+    <span class="severity-dot severity-error"></span><strong>오류</strong> — 계산상 확실한 문제 (중복 직원, 합계 불일치, 음수 금액)<br />
+    <span class="severity-dot severity-warning"></span><strong>경고</strong> — 총지급액·실지급액 등 핵심 금액이 크게 변동<br />
+    <span class="severity-dot severity-review"></span><strong>확인필요</strong> — 신규/퇴사, 항목 변동 등 검토가 필요한 변화<br />
+    <span class="severity-dot severity-normal"></span><strong>정상</strong> — 전월 대비 이상 없음
+  </span>
+</span>
+{% endmacro %}

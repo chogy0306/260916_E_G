@@ -3,7 +3,7 @@
 {% block content %}
 <a href="{{ url_for('validation.results', upload_id=result.upload_id) }}">&larr; 목록으로</a>
 <h2 class="mt-2 mb-3">
-  {% if result.severity == 'ERROR' %}🔴{% elif result.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
+  <span class="severity-dot severity-dot-lg severity-{{ result.severity|lower }}"></span>
   {{ result.employee.employee_name if result.employee else '-' }} - {{ result.category }}
 </h2>
 
@@ -34,8 +34,7 @@
     {% for r in employee_results %}
     <a href="{{ url_for('validation.detail', result_id=r.id) }}"
        class="employee-nav-chip severity-{{ r.severity|lower }} {{ 'active' if r.id == result.id else '' }}">
-      {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
-      {{ r.category }}
+      <span class="severity-dot severity-{{ r.severity|lower }}"></span>{{ r.category }}
     </a>
     {% endfor %}
   </div>

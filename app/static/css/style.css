@@ -1,7 +1,67 @@
+:root {
+  --etners-orange: #ff6d2d;
+  --etners-orange-dark: #e85a1c;
+  --etners-dark: #333132;
+}
+
 body {
   background: #f4f5f7;
 }
 
 .card {
   border-radius: 10px;
+}
+
+/* Etners brand palette */
+
+.navbar.bg-dark {
+  background-color: var(--etners-dark) !important;
+}
+
+.navbar-brand {
+  color: var(--etners-orange) !important;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+a {
+  color: var(--etners-orange-dark);
+}
+
+a:hover {
+  color: var(--etners-orange);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--etners-orange);
+  --bs-btn-border-color: var(--etners-orange);
+  --bs-btn-hover-bg: var(--etners-orange-dark);
+  --bs-btn-hover-border-color: var(--etners-orange-dark);
+  --bs-btn-active-bg: var(--etners-orange-dark);
+  --bs-btn-active-border-color: var(--etners-orange-dark);
+  --bs-btn-disabled-bg: var(--etners-orange);
+  --bs-btn-disabled-border-color: var(--etners-orange);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--etners-orange);
+  --bs-btn-border-color: var(--etners-orange);
+  --bs-btn-hover-bg: var(--etners-orange);
+  --bs-btn-hover-border-color: var(--etners-orange);
+  --bs-btn-active-bg: var(--etners-orange);
+  --bs-btn-active-border-color: var(--etners-orange);
+}
+
+.text-primary {
+  color: var(--etners-orange) !important;
+}
+
+.border-primary {
+  border-color: var(--etners-orange) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--etners-orange);
+  box-shadow: 0 0 0 0.25rem rgba(255, 109, 45, 0.25);
 }

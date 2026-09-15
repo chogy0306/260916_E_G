@@ -31,7 +31,7 @@ def index():
             .all()
         )
         severity_order = {"ERROR": 0, "WARNING": 1, "REVIEW": 2}
-        top_errors = sorted(top_errors, key=lambda r: severity_order.get(r.severity, 9))[:10]
+        top_errors = sorted(top_errors, key=lambda r: severity_order.get(r.severity, 9))
 
     return render_template(
         "dashboard.html",

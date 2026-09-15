@@ -23,7 +23,7 @@ def create_app(config_class=Config):
     from app.models.user import User
     from app.services.mapping_service import field_label
 
-    SEVERITY_LABELS = {"ERROR": "오류", "WARNING": "경고", "REVIEW": "확인필요"}
+    SEVERITY_LABELS = {"ERROR": "오류", "WARNING": "경고", "REVIEW": "확인필요", "NORMAL": "정상"}
     RESULT_STATUS_LABELS = {
         "NEW": "신규",
         "REVIEWING": "검토중",

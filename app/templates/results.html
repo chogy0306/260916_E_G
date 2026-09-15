@@ -10,7 +10,7 @@
   <div class="col-auto">
     <select name="severity" class="form-select">
       <option value="">전체 등급</option>
-      {% for s in ['ERROR', 'WARNING', 'REVIEW'] %}
+      {% for s in ['ERROR', 'WARNING', 'REVIEW', 'NORMAL'] %}
       <option value="{{ s }}" {{ 'selected' if severity == s else '' }}>{{ s|severity_label }}</option>
       {% endfor %}
     </select>
@@ -52,9 +52,21 @@
       <td class="text-end">{{ '%.1f'|format(r.change_rate) + '%' if r.change_rate is not none else '-' }}</td>
       <td>{{ r.status|result_status_label }}</td>
     </tr>
-    {% else %}
-    <tr><td colspan="7" class="text-center text-muted">조건에 맞는 결과가 없습니다.</td></tr>
     {% endfor %}
+    {% for r in normal_rows %}
+    <tr class="table-success">
+      <td>🟢 정상</td>
+      <td>{{ r.employee.employee_name }}</td>
+      <td>정상 (변동 없음)</td>
+      <td class="text-end">-</td>
+      <td class="text-end">-</td>
+      <td class="text-end">-</td>
+      <td>-</td>
+    </tr>
+    {% endfor %}
+    {% if not items and not normal_rows %}
+    <tr><td colspan="7" class="text-center text-muted">조건에 맞는 결과가 없습니다.</td></tr>
+    {% endif %}
   </tbody>
 </table>
 {% endblock %}

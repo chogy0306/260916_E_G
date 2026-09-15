@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 from flask import Blueprint, flash, redirect, request, render_template, send_file, url_for
 from flask_login import current_user, login_required
 
@@ -26,7 +28,7 @@ def results(upload_id):
     status = request.args.get("status")
     keyword = request.args.get("q")
 
-    if severity:
+    if severity and severity != "NORMAL":
         query = query.filter(ValidationResult.severity == severity)
     if status:
         query = query.filter(ValidationResult.status == status)
@@ -47,9 +49,54 @@ def results(upload_id):
         (ValidationResult.severity == "REVIEW", 2),
         else_=9,
     )
-    items = query.order_by(severity_order).all()
+    # "정상" isn't stored as a row per employee (that would bloat the table for
+    # zero information); it's derived here as employees with no findings at all.
+    items = [] if severity == "NORMAL" else query.order_by(severity_order).all()
 
-    return render_template("results.html", upload=upload, items=items, severity=severity, status=status, q=keyword or "")
+    normal_rows = []
+    if not status and severity in (None, "", "NORMAL"):
+        flagged_ids = {
+            r.employee_id
+            for r in ValidationResult.query.filter_by(upload_id=upload.id).all()
+            if r.employee_id
+        }
+        normal_query = PayrollEmployee.query.filter_by(upload_id=upload.id)
+        if flagged_ids:
+            normal_query = normal_query.filter(~PayrollEmployee.id.in_(flagged_ids))
+        normal_employees = normal_query.order_by(PayrollEmployee.employee_name).all()
+
+        if keyword:
+            kw = keyword.lower()
+            normal_employees = [
+                e
+                for e in normal_employees
+                if kw in (e.employee_name or "").lower() or kw in (e.department or "").lower()
+            ]
+
+        normal_rows = [
+            SimpleNamespace(
+                id=None,
+                severity="NORMAL",
+                employee=e,
+                category="정상 (변동 없음)",
+                field_name=None,
+                previous_value=None,
+                current_value=None,
+                change_rate=None,
+                status=None,
+            )
+            for e in normal_employees
+        ]
+
+    return render_template(
+        "results.html",
+        upload=upload,
+        items=items,
+        normal_rows=normal_rows,
+        severity=severity,
+        status=status,
+        q=keyword or "",
+    )
 
 
 @validation_bp.route("/validation-results/<int:result_id>")

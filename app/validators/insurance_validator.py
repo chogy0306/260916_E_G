@@ -90,7 +90,12 @@ def check(employees, values_by_employee, prev_values_by_employee_id, rules_by_co
             base_amount = items.get(RATE_BASE_FOR_ITEM.get(item, "base_salary"))
             if rate_rule and rate_rule.is_active and base_amount and current is not None:
                 expected = base_amount * rate_rule.threshold / 100
-                tolerance = max(1000, expected * 0.02)
+                # Real payrolls round differently (won/10-won units) and some
+                # companies apply the rate a pay-period behind schedule, so a
+                # tight tolerance flags nearly everyone. 2% -> 5% (min raised
+                # to 2,000) cuts that noise while still catching a genuinely
+                # wrong rate (e.g. an old percentage carried over).
+                tolerance = max(2000, expected * 0.05)
                 if abs(current - expected) > tolerance:
                     findings.append(
                         {

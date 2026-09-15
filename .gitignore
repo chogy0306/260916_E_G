@@ -6,3 +6,6 @@ venv/
 *.db
 .vercel
 supabase/.temp/
+
+.vercel
+.env*

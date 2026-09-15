@@ -25,7 +25,7 @@
       </div>
       <form action="{{ url_for('auth.logout') }}" method="post" class="d-flex align-items-center gap-2">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <span class="text-light small">{{ current_user.username }}</span>
+        <a href="{{ url_for('auth.change_password') }}" class="text-light small text-decoration-none">{{ current_user.username }}</a>
         <button class="btn btn-outline-light btn-sm" type="submit">로그아웃</button>
       </form>
     </div>

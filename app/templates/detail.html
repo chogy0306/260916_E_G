@@ -2,10 +2,46 @@
 {% block title %}이상치 상세{% endblock %}
 {% block content %}
 <a href="{{ url_for('validation.results', upload_id=result.upload_id) }}">&larr; 목록으로</a>
-<h2 class="mt-2 mb-4">
+<h2 class="mt-2 mb-3">
   {% if result.severity == 'ERROR' %}🔴{% elif result.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
   {{ result.employee.employee_name if result.employee else '-' }} - {{ result.category }}
 </h2>
+
+{% if employee_results %}
+<div class="employee-nav mb-3">
+  <div class="employee-nav-row">
+    {% if position > 0 %}
+    <a href="{{ url_for('validation.detail', result_id=employee_results[position - 1].id) }}" class="btn btn-sm btn-outline-secondary">&larr; 이전 이상치</a>
+    {% elif prev_employee_group %}
+    <a href="{{ url_for('validation.detail', result_id=prev_employee_group.results[-1].id) }}" class="btn btn-sm btn-outline-secondary">&larr; 이전 직원: {{ prev_employee_group.employee_name }}</a>
+    {% else %}
+    <span></span>
+    {% endif %}
+
+    <span class="employee-nav-position">{{ result.employee.employee_name }} · {{ position + 1 }}/{{ employee_results|length }}</span>
+
+    {% if position + 1 < employee_results|length %}
+    <a href="{{ url_for('validation.detail', result_id=employee_results[position + 1].id) }}" class="btn btn-sm btn-outline-secondary">다음 이상치 &rarr;</a>
+    {% elif next_employee_group %}
+    <a href="{{ url_for('validation.detail', result_id=next_employee_group.results[0].id) }}" class="btn btn-sm btn-outline-secondary">다음 직원: {{ next_employee_group.employee_name }} &rarr;</a>
+    {% else %}
+    <span></span>
+    {% endif %}
+  </div>
+
+  {% if employee_results|length > 1 %}
+  <div class="employee-nav-chips">
+    {% for r in employee_results %}
+    <a href="{{ url_for('validation.detail', result_id=r.id) }}"
+       class="employee-nav-chip severity-{{ r.severity|lower }} {{ 'active' if r.id == result.id else '' }}">
+      {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
+      {{ r.category }}
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
 
 <div class="card p-4 mb-4">
   <p>{{ result.message }}</p>

@@ -157,6 +157,61 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0;
 }
 
+/* Employee navigation on the detail page */
+
+.employee-nav {
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 14px 16px;
+}
+
+.employee-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.employee-nav-position {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.employee-nav-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.employee-nav-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #f1f0ef;
+  color: var(--muted);
+  border: 1px solid transparent;
+}
+
+.employee-nav-chip:hover {
+  color: var(--ink);
+}
+
+.employee-nav-chip.active {
+  background: #fff;
+  border-color: var(--etners-orange);
+  color: var(--ink);
+}
+
 /* Tables */
 
 .table {

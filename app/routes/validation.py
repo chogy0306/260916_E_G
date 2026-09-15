@@ -128,7 +128,35 @@ def results(upload_id):
 @login_required
 def detail(result_id):
     result = ValidationResult.query.get_or_404(result_id)
-    return render_template("detail.html", result=result)
+
+    employee_results = []
+    position = None
+    prev_employee_group = None
+    next_employee_group = None
+
+    if result.employee:
+        upload_results = ValidationResult.query.filter_by(upload_id=result.upload_id).all()
+        groups, _ = _group_by_employee(upload_results, [])
+        group_index = next(
+            (i for i, g in enumerate(groups) if any(r.id == result.id for r in g["results"])),
+            None,
+        )
+        if group_index is not None:
+            employee_results = groups[group_index]["results"]
+            position = next(i for i, r in enumerate(employee_results) if r.id == result.id)
+            if group_index > 0 and groups[group_index - 1]["results"]:
+                prev_employee_group = groups[group_index - 1]
+            if group_index + 1 < len(groups) and groups[group_index + 1]["results"]:
+                next_employee_group = groups[group_index + 1]
+
+    return render_template(
+        "detail.html",
+        result=result,
+        employee_results=employee_results,
+        position=position,
+        prev_employee_group=prev_employee_group,
+        next_employee_group=next_employee_group,
+    )
 
 
 @validation_bp.route("/validation-results/<int:result_id>/status", methods=["POST"])

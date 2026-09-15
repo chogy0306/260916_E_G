@@ -31,45 +31,82 @@
   </div>
 </form>
 
-<table class="table table-hover bg-white">
-  <thead>
-    <tr><th>등급</th><th>직원</th><th>구분</th><th class="text-end">전월</th><th class="text-end">이번달</th><th class="text-end">변동률</th><th>상태</th></tr>
-  </thead>
-  <tbody>
-    {% for r in items %}
-    <tr>
-      <td>
-        <span class="severity-pill severity-{{ r.severity|lower }}">
-          {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
-          {{ r.severity|severity_label }}
-        </span>
-      </td>
-      <td>{{ r.employee.employee_name if r.employee else '-' }}</td>
-      <td>
-        <a href="{{ url_for('validation.detail', result_id=r.id) }}">
-          {{ r.category }}{% if r.field_name %} <span class="text-muted small">({{ r.field_name|field_label }})</span>{% endif %}
-        </a>
-      </td>
-      <td class="text-end">{{ r.previous_value|commas }}</td>
-      <td class="text-end">{{ r.current_value|commas }}</td>
-      <td class="text-end">{{ '%.1f'|format(r.change_rate) + '%' if r.change_rate is not none else '-' }}</td>
-      <td><span class="status-pill">{{ r.status|result_status_label }}</span></td>
-    </tr>
-    {% endfor %}
-    {% for r in normal_rows %}
-    <tr>
-      <td><span class="severity-pill severity-normal">🟢 정상</span></td>
-      <td>{{ r.employee.employee_name }}</td>
-      <td>정상 (변동 없음)</td>
-      <td class="text-end">-</td>
-      <td class="text-end">-</td>
-      <td class="text-end">-</td>
-      <td>-</td>
-    </tr>
-    {% endfor %}
-    {% if not items and not normal_rows %}
-    <tr><td colspan="7" class="text-center text-muted">조건에 맞는 결과가 없습니다.</td></tr>
-    {% endif %}
-  </tbody>
-</table>
+{% for group in groups %}
+<div class="employee-group mb-3">
+  <div class="employee-group-header">
+    <div>
+      <span class="employee-group-name">{{ group.employee_name or '-' }}</span>
+      {% if group.department %}<span class="employee-group-dept">{{ group.department }}</span>{% endif %}
+    </div>
+    <div class="employee-group-counts">
+      {% if group.results %}
+        {% for sev in ['ERROR', 'WARNING', 'REVIEW'] %}
+          {% set c = group.results|selectattr('severity', 'equalto', sev)|list|length %}
+          {% if c %}
+          <span class="severity-pill severity-{{ sev|lower }}">
+            {% if sev == 'ERROR' %}🔴{% elif sev == 'WARNING' %}🟠{% else %}🟡{% endif %}
+            {{ sev|severity_label }} {{ c }}
+          </span>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+      <span class="severity-pill severity-normal">🟢 정상</span>
+      {% endif %}
+    </div>
+  </div>
+  {% if group.results %}
+  <table class="table table-hover bg-white mb-0">
+    <thead>
+      <tr><th>등급</th><th>구분</th><th class="text-end">전월</th><th class="text-end">이번달</th><th class="text-end">변동률</th><th>상태</th></tr>
+    </thead>
+    <tbody>
+      {% for r in group.results %}
+      <tr>
+        <td>
+          <span class="severity-pill severity-{{ r.severity|lower }}">
+            {% if r.severity == 'ERROR' %}🔴{% elif r.severity == 'WARNING' %}🟠{% else %}🟡{% endif %}
+            {{ r.severity|severity_label }}
+          </span>
+        </td>
+        <td>
+          <a href="{{ url_for('validation.detail', result_id=r.id) }}">
+            {{ r.category }}{% if r.field_name %} <span class="text-muted small">({{ r.field_name|field_label }})</span>{% endif %}
+          </a>
+        </td>
+        <td class="text-end">{{ r.previous_value|commas }}</td>
+        <td class="text-end">{{ r.current_value|commas }}</td>
+        <td class="text-end">{{ '%.1f'|format(r.change_rate) + '%' if r.change_rate is not none else '-' }}</td>
+        <td><span class="status-pill">{{ r.status|result_status_label }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endfor %}
+
+{% if unassigned %}
+<div class="employee-group mb-3">
+  <div class="employee-group-header">
+    <span class="employee-group-name">인원 변동 (직원 매칭 안 됨)</span>
+  </div>
+  <table class="table table-hover bg-white mb-0">
+    <thead><tr><th>등급</th><th>구분</th><th>내용</th><th>상태</th></tr></thead>
+    <tbody>
+      {% for r in unassigned %}
+      <tr>
+        <td><span class="severity-pill severity-{{ r.severity|lower }}">🟡 {{ r.severity|severity_label }}</span></td>
+        <td><a href="{{ url_for('validation.detail', result_id=r.id) }}">{{ r.category }}</a></td>
+        <td>{{ r.message }}</td>
+        <td><span class="status-pill">{{ r.status|result_status_label }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if not groups and not unassigned %}
+<div class="alert alert-info text-center">조건에 맞는 결과가 없습니다.</div>
+{% endif %}
 {% endblock %}

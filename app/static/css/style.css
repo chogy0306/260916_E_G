@@ -115,6 +115,48 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 2px;
 }
 
+/* Employee-grouped results */
+
+.employee-group {
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.employee-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 20px;
+  background: #f7f5f3;
+}
+
+.employee-group-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.employee-group-dept {
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin-left: 8px;
+}
+
+.employee-group-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.employee-group .table {
+  box-shadow: none;
+  border-radius: 0;
+}
+
 /* Tables */
 
 .table {

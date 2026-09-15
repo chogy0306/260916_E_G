@@ -1,5 +1,3 @@
-from types import SimpleNamespace
-
 from flask import Blueprint, flash, redirect, request, render_template, send_file, url_for
 from flask_login import current_user, login_required
 
@@ -15,6 +13,46 @@ from app.services import ai_service
 from app.services.report_service import build_results_excel
 
 validation_bp = Blueprint("validation", __name__)
+
+SEVERITY_RANK = {"ERROR": 0, "WARNING": 1, "REVIEW": 2, "NORMAL": 3}
+
+
+def _group_by_employee(items, normal_employees):
+    """Groups findings by business employee_id so duplicate PayrollEmployee
+    rows (e.g. a flagged duplicate-employee-id case) merge into one group."""
+    groups_by_key = {}
+    unassigned = []
+
+    for r in items:
+        if not r.employee:
+            unassigned.append(r)
+            continue
+        key = r.employee.employee_id
+        group = groups_by_key.setdefault(
+            key,
+            {
+                "employee_name": r.employee.employee_name,
+                "department": r.employee.department,
+                "results": [],
+                "rank": SEVERITY_RANK["NORMAL"],
+            },
+        )
+        group["results"].append(r)
+        group["rank"] = min(group["rank"], SEVERITY_RANK.get(r.severity, 9))
+
+    for e in normal_employees:
+        groups_by_key.setdefault(
+            e.employee_id,
+            {
+                "employee_name": e.employee_name,
+                "department": e.department,
+                "results": [],
+                "rank": SEVERITY_RANK["NORMAL"],
+            },
+        )
+
+    groups = sorted(groups_by_key.values(), key=lambda g: (g["rank"], g["employee_name"] or ""))
+    return groups, unassigned
 
 
 @validation_bp.route("/uploads/<int:upload_id>/results")
@@ -53,7 +91,7 @@ def results(upload_id):
     # zero information); it's derived here as employees with no findings at all.
     items = [] if severity == "NORMAL" else query.order_by(severity_order).all()
 
-    normal_rows = []
+    normal_employees = []
     if not status and severity in (None, "", "NORMAL"):
         flagged_ids = {
             r.employee_id
@@ -73,26 +111,13 @@ def results(upload_id):
                 if kw in (e.employee_name or "").lower() or kw in (e.department or "").lower()
             ]
 
-        normal_rows = [
-            SimpleNamespace(
-                id=None,
-                severity="NORMAL",
-                employee=e,
-                category="정상 (변동 없음)",
-                field_name=None,
-                previous_value=None,
-                current_value=None,
-                change_rate=None,
-                status=None,
-            )
-            for e in normal_employees
-        ]
+    groups, unassigned = _group_by_employee(items, normal_employees)
 
     return render_template(
         "results.html",
         upload=upload,
-        items=items,
-        normal_rows=normal_rows,
+        groups=groups,
+        unassigned=unassigned,
         severity=severity,
         status=status,
         q=keyword or "",

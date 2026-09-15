@@ -1,46 +1,27 @@
 {% extends "base.html" %}
 {% block title %}로그인{% endblock %}
 {% block content %}
-<div class="row justify-content-center mt-5">
-  <div class="col-md-4">
-    <div class="card">
-      <h2 class="mb-4">관리자 로그인</h2>
-      {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-      <form method="post">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <div class="mb-3">
-          <input type="text" name="username" class="form-control" placeholder="아이디" autofocus required />
-        </div>
-        <div class="mb-3">
-          <input type="password" name="password" class="form-control" placeholder="비밀번호" required />
-        </div>
-        <button type="submit" class="btn btn-primary w-100">로그인</button>
-      </form>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="login-brand-mark"></span>
+      <span class="login-brand-name">급여대장 자동 검증</span>
     </div>
-    <div class="card mt-3">
-      <h5 class="mb-3">테스트 계정</h5>
-      <table class="table table-sm mb-0" style="white-space: nowrap;">
-        <thead>
-          <tr>
-            <th>구분</th>
-            <th>아이디</th>
-            <th>비밀번호</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>관리자</td>
-            <td>admin</td>
-            <td>123456789</td>
-          </tr>
-          <tr>
-            <td>일반 사용자</td>
-            <td>user</td>
-            <td>user1234</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <p class="login-subtitle">이트너스 경영지원팀</p>
+
+    {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <div class="mb-3">
+        <label class="form-label">아이디</label>
+        <input type="text" name="username" class="form-control" placeholder="아이디를 입력하세요" autofocus required />
+      </div>
+      <div class="mb-4">
+        <label class="form-label">비밀번호</label>
+        <input type="password" name="password" class="form-control" placeholder="비밀번호를 입력하세요" required />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">로그인</button>
+    </form>
   </div>
 </div>
 {% endblock %}

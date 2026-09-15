@@ -253,3 +253,55 @@ a:hover {
   padding: 2rem;
   box-shadow: var(--shadow-md);
 }
+
+.login-wrapper {
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+  padding: 2.5rem 2.25rem;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.login-brand-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--etners-orange);
+  flex: none;
+}
+
+.login-brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--etners-dark);
+  letter-spacing: -0.01em;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.75rem;
+}
+
+.login-card .form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}

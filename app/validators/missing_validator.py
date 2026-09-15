@@ -1,3 +1,5 @@
+from app.services.mapping_service import field_label
+
 NEGATIVE_NOT_ALLOWED = {"base_salary", "total_earnings", "net_salary"}
 
 
@@ -39,7 +41,7 @@ def check(employees, values_by_employee):
                         "severity": "ERROR",
                         "field_name": field,
                         "current_value": value,
-                        "message": f"'{emp.employee_name}'의 {field} 값이 음수({value:,.0f})입니다.",
+                        "message": f"'{emp.employee_name}'의 {field_label(field)} 값이 음수({value:,.0f})입니다.",
                         "rule_code": "NEGATIVE_AMOUNT",
                     }
                 )

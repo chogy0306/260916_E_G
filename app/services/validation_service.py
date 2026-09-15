@@ -16,6 +16,10 @@ DEFAULT_RULES = [
     ("RATE_TOTAL_EARNINGS", "총지급액 변동 기준", 20.0, "WARNING"),
     ("RATE_NET_SALARY", "실지급액 변동 기준", 20.0, "WARNING"),
     ("RATE_OTHER_ITEM", "기타 급여 항목 변동 기준", 30.0, "REVIEW"),
+    ("INSURANCE_RATE_NATIONAL_PENSION", "국민연금 요율(%)", 4.5, "REVIEW"),
+    ("INSURANCE_RATE_HEALTH", "건강보험 요율(%)", 3.545, "REVIEW"),
+    ("INSURANCE_RATE_LONG_TERM_CARE", "장기요양보험 요율(%)", 0.4591, "REVIEW"),
+    ("INSURANCE_RATE_EMPLOYMENT", "고용보험 요율(%)", 0.9, "REVIEW"),
 ]
 
 
@@ -74,6 +78,7 @@ def run_validation(upload, previous_upload=None):
     findings += outlier_service.detect(employees, values_by_employee)
 
     new_ids, missing_ids = set(), set()
+    prev_values = {}
     if previous_upload:
         previous_employees = PayrollEmployee.query.filter_by(upload_id=previous_upload.id).all()
         prev_values = _prev_values_by_business_id(previous_employees)
@@ -85,7 +90,11 @@ def run_validation(upload, previous_upload=None):
         findings += comparison_service.compare_values(
             employees, values_by_employee, prev_values, rules_by_code
         )
-        findings += insurance_validator.check(employees, values_by_employee, prev_values)
+
+    # Runs even without a previous upload: the legal-rate check needs only
+    # this month's data, unlike INSURANCE_MISSING/INSURANCE_RATE_CHANGE
+    # which naturally no-op when prev_values is empty.
+    findings += insurance_validator.check(employees, values_by_employee, prev_values, rules_by_code)
 
     rule_lookup = {r.rule_code: r for r in ValidationRule.query.all()}
 

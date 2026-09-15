@@ -2,13 +2,22 @@ from app.services.mapping_service import INSURANCE_ITEMS, field_label
 
 RATE_THRESHOLD = 20.0
 
+RATE_RULE_FOR_ITEM = {
+    "pension": "INSURANCE_RATE_NATIONAL_PENSION",
+    "health_insurance": "INSURANCE_RATE_HEALTH",
+    "long_term_care": "INSURANCE_RATE_LONG_TERM_CARE",
+    "employment_insurance": "INSURANCE_RATE_EMPLOYMENT",
+}
 
-def check(employees, values_by_employee, prev_values_by_employee_id):
+
+def check(employees, values_by_employee, prev_values_by_employee_id, rules_by_code=None):
     """prev_values_by_employee_id: {employee_id(business key): {item: value}}"""
+    rules_by_code = rules_by_code or {}
     findings = []
     for emp in employees:
         items = values_by_employee.get(emp.id, {})
         prev_items = prev_values_by_employee_id.get(emp.employee_id, {})
+        base_salary = items.get("base_salary")
 
         mapped_insurance_items = [i for i in INSURANCE_ITEMS if i in items or i in prev_items]
         if not mapped_insurance_items:
@@ -65,6 +74,27 @@ def check(employees, values_by_employee, prev_values_by_employee_id):
                                 f"{rate:+.1f}% 변동했습니다."
                             ),
                             "rule_code": "INSURANCE_RATE_CHANGE",
+                        }
+                    )
+
+            rate_rule = rules_by_code.get(RATE_RULE_FOR_ITEM.get(item))
+            if rate_rule and rate_rule.is_active and base_salary and current is not None:
+                expected = base_salary * rate_rule.threshold / 100
+                tolerance = max(1000, expected * 0.02)
+                if abs(current - expected) > tolerance:
+                    findings.append(
+                        {
+                            "employee_pk": emp.id,
+                            "category": "4대보험",
+                            "severity": rate_rule.severity,
+                            "field_name": item,
+                            "current_value": current,
+                            "message": (
+                                f"'{emp.employee_name}'의 {label} 공제액({current:,.0f}원)이 "
+                                f"신고된 요율({rate_rule.threshold}%) 기준 예상액({expected:,.0f}원)과 "
+                                f"{abs(current - expected):,.0f}원 차이가 납니다."
+                            ),
+                            "rule_code": rate_rule.rule_code,
                         }
                     )
     return findings

@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
@@ -67,7 +69,7 @@ def new_upload():
 
         return redirect(url_for("upload.mapping", upload_id=upload.id))
 
-    return render_template("upload.html")
+    return render_template("upload.html", today=date.today())
 
 
 @upload_bp.route("/<int:upload_id>/mapping", methods=["GET", "POST"])

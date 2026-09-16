@@ -2,16 +2,20 @@
 {% block title %}급여대장 업로드{% endblock %}
 {% block content %}
 <h2 class="mb-4">급여대장 업로드</h2>
-<form method="post" enctype="multipart/form-data" class="card p-4">
+<form method="post" enctype="multipart/form-data" class="card p-4" id="upload-form">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <div class="row mb-3">
-    <div class="col-md-3">
-      <label class="form-label">귀속 연도</label>
-      <input type="number" name="payroll_year" class="form-control" value="{{ now.year if now else '' }}" required />
-    </div>
-    <div class="col-md-3">
-      <label class="form-label">귀속 월</label>
-      <input type="number" name="payroll_month" min="1" max="12" class="form-control" required />
+    <div class="col-md-4">
+      <label class="form-label">귀속 연월</label>
+      <input
+        type="month"
+        id="payroll_period"
+        class="form-control"
+        value="{{ '%04d-%02d'|format(today.year, today.month) if today else '' }}"
+        required
+      />
+      <input type="hidden" name="payroll_year" id="payroll_year" />
+      <input type="hidden" name="payroll_month" id="payroll_month" />
     </div>
   </div>
   <div class="mb-3">
@@ -20,4 +24,18 @@
   </div>
   <button type="submit" class="btn btn-primary">업로드</button>
 </form>
+
+<script>
+  document.getElementById("upload-form").addEventListener("submit", function (e) {
+    var period = document.getElementById("payroll_period").value; // "YYYY-MM"
+    var parts = period.split("-");
+    if (parts.length !== 2) {
+      e.preventDefault();
+      alert("귀속 연월을 선택해주세요.");
+      return;
+    }
+    document.getElementById("payroll_year").value = parseInt(parts[0], 10);
+    document.getElementById("payroll_month").value = parseInt(parts[1], 10);
+  });
+</script>
 {% endblock %}

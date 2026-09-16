@@ -15,11 +15,13 @@ STATUS_LABELS = {
     "RESOLVED": "해결됨",
 }
 # (background, text) hex pairs, matching the web UI's severity-dot colors.
+# openpyxl defaults a bare 6-digit hex to alpha 00 (fully transparent), so
+# every color must carry an explicit "FF" alpha prefix to actually show up.
 SEVERITY_COLORS = {
-    "ERROR": ("FDECEB", "C8372C"),
-    "WARNING": ("FDF1E2", "B96F0C"),
-    "REVIEW": ("FDF7E0", "9C7C0A"),
-    "NORMAL": ("E9F7EF", "1F8A4E"),
+    "ERROR": ("FFFDECEB", "FFC8372C"),
+    "WARNING": ("FFFDF1E2", "FFB96F0C"),
+    "REVIEW": ("FFFDF7E0", "FF9C7C0A"),
+    "NORMAL": ("FFE9F7EF", "FF1F8A4E"),
 }
 RANK_TO_SEVERITY = ["ERROR", "WARNING", "REVIEW", "NORMAL"]
 
@@ -83,7 +85,7 @@ def _write_detail_row(ws, row, employee_id, employee_name, department, r):
     for col, value in enumerate(values, start=1):
         ws.cell(row=row, column=col, value=value)
 
-    sev_bg, sev_fg = SEVERITY_COLORS.get(r.severity, ("FFFFFF", "000000"))
+    sev_bg, sev_fg = SEVERITY_COLORS.get(r.severity, ("FFFFFFFF", "FF000000"))
     sev_cell = ws.cell(row=row, column=5)
     sev_cell.fill = PatternFill("solid", fgColor=sev_bg)
     sev_cell.font = Font(color=sev_fg, bold=True)
@@ -109,7 +111,7 @@ def build_results_excel(groups, unassigned):
     ws.title = "검증결과"
 
     ws.append(HEADERS)
-    _paint_row(ws, 1, num_cols, "333132", "FFFFFF", bold=True)
+    _paint_row(ws, 1, num_cols, "FF333132", "FFFFFFFF", bold=True)
     for col in range(1, num_cols + 1):
         ws.cell(row=1, column=col).alignment = Alignment(vertical="center")
 

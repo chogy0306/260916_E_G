@@ -232,6 +232,13 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-sm);
 }
 
+/* Without a floor, a table inside .table-responsive just shrinks to the
+   viewport width and wraps every cell's text vertically letter-by-letter
+   on narrow screens instead of scrolling horizontally. */
+.table-responsive .table {
+  min-width: 640px;
+}
+
 .table thead th {
   background: #f7f5f3;
   color: var(--muted);

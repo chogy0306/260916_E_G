@@ -57,6 +57,7 @@
   <h5>전체 결과 {{ severity_help() }}</h5>
   <a href="{{ url_for('validation.results', upload_id=latest.id) }}" class="btn btn-sm btn-primary">필터/상태 관리로 보기</a>
 </div>
+<div class="table-responsive">
 <table class="table table-hover bg-white">
   <thead>
     <tr><th class="text-nowrap">등급</th><th class="text-nowrap">직원</th><th class="text-nowrap">구분</th><th>내용</th></tr>
@@ -78,6 +79,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% else %}
 <div class="alert alert-info">
   이 급여대장은 아직 검증되지 않았습니다.
@@ -88,6 +90,7 @@
 {% endif %}
 
 <h5 class="mt-5">검증 이력</h5>
+<div class="table-responsive">
 <table class="table bg-white">
   <thead><tr><th>연월</th><th>상태</th><th>파일명</th><th></th></tr></thead>
   <tbody>
@@ -117,6 +120,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 
 {% endif %}
 {% endblock %}

@@ -11,6 +11,8 @@ from app.validators import (
 )
 from app.services import comparison_service, outlier_service
 
+SEVERITY_RANK = {"ERROR": 0, "WARNING": 1, "REVIEW": 2}
+
 DEFAULT_RULES = [
     ("RATE_BASE_SALARY", "기본급 변동 기준", 10.0, "REVIEW"),
     ("RATE_TOTAL_EARNINGS", "총지급액 변동 기준", 20.0, "WARNING"),
@@ -57,6 +59,41 @@ def _prev_values_by_business_id(previous_employees):
     return result
 
 
+def _combine_findings(group):
+    """Collapse several findings about the same (employee, field) into one:
+    highest severity wins, categories/messages are combined so nothing any
+    individual check caught is lost."""
+    group = sorted(group, key=lambda f: SEVERITY_RANK.get(f["severity"], 9))
+    primary = dict(group[0])
+    categories = list(dict.fromkeys(f["category"] for f in group))
+    primary["category"] = " · ".join(categories)
+    primary["message"] = "\n".join(f"- {f['message']}" for f in group)
+    return primary
+
+
+def _merge_duplicate_field_findings(findings):
+    """Several validators can each flag the same (employee, field) from a
+    different angle - an impossible absolute value, an outlier versus peers,
+    a large month-over-month change. Merge those into one finding instead of
+    showing several near-identical rows for the same underlying number.
+    Findings without both an employee and a field (missing-employee rows,
+    etc.) are left exactly as they are."""
+    groups = {}
+    keys_in_order = []
+    for f in findings:
+        emp, field = f.get("employee_pk"), f.get("field_name")
+        key = (emp, field) if emp is not None and field is not None else id(f)
+        if key not in groups:
+            groups[key] = []
+            keys_in_order.append(key)
+        groups[key].append(f)
+
+    return [
+        group[0] if len(group) == 1 else _combine_findings(group)
+        for group in (groups[key] for key in keys_in_order)
+    ]
+
+
 def run_validation(upload, previous_upload=None):
     # Delete via the ORM (not a bulk Query.delete()) so the
     # cascade="all, delete-orphan" on ai_analysis/notes actually fires.
@@ -95,6 +132,8 @@ def run_validation(upload, previous_upload=None):
     # this month's data, unlike INSURANCE_MISSING/INSURANCE_RATE_CHANGE
     # which naturally no-op when prev_values is empty.
     findings += insurance_validator.check(employees, values_by_employee, prev_values, rules_by_code)
+
+    findings = _merge_duplicate_field_findings(findings)
 
     rule_lookup = {r.rule_code: r for r in ValidationRule.query.all()}
 

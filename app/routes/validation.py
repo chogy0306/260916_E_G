@@ -204,11 +204,13 @@ def ai_analysis(result_id):
 
     payload = {
         "employee_id": result.employee.employee_id if result.employee else None,
+        "category": result.category,
         "field_name": result.field_name,
         "previous_value": float(result.previous_value) if result.previous_value is not None else None,
         "current_value": float(result.current_value) if result.current_value is not None else None,
         "change_rate": result.change_rate,
         "detected_rule": result.rule.rule_code if result.rule else result.category,
+        "message": result.message,
     }
 
     analysis = ai_service.analyze(payload)

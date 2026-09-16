@@ -10,7 +10,7 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" form="rule-form-{{ rule.id }}" />
     <tr>
       <td>{{ rule.rule_name }}<div class="text-muted small">{{ rule.rule_code }}</div></td>
-      <td style="width:120px">
+      <td style="width:180px">
         <input form="rule-form-{{ rule.id }}" type="number" step="0.1" name="threshold" class="form-control" value="{{ rule.threshold }}" />
       </td>
       <td style="width:140px">

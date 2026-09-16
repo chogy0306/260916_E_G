@@ -473,17 +473,6 @@ body.login-body {
   box-shadow: 0 10px 24px rgba(255, 109, 45, 0.35);
 }
 
-.login-help {
-  text-align: center;
-  font-size: 0.82rem;
-  color: var(--muted);
-  margin: 1.25rem 0 0;
-}
-
-.login-help strong {
-  color: var(--etners-orange-dark);
-}
-
 .login-footer {
   text-align: center;
   font-size: 0.78rem;

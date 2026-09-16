@@ -31,6 +31,7 @@ def _group_by_employee(items, normal_employees):
         group = groups_by_key.setdefault(
             key,
             {
+                "employee_id": r.employee.employee_id,
                 "employee_name": r.employee.employee_name,
                 "department": r.employee.department,
                 "results": [],
@@ -44,6 +45,7 @@ def _group_by_employee(items, normal_employees):
         groups_by_key.setdefault(
             e.employee_id,
             {
+                "employee_id": e.employee_id,
                 "employee_name": e.employee_name,
                 "department": e.department,
                 "results": [],
@@ -235,12 +237,18 @@ def ai_analysis(result_id):
 def download_results(upload_id):
     upload = PayrollUpload.query.get_or_404(upload_id)
     items = ValidationResult.query.filter_by(upload_id=upload.id).all()
-    groups, unassigned = _group_by_employee(items, [])
-    ordered_items = [r for group in groups for r in group["results"]] + unassigned
-    buffer = build_results_excel(ordered_items)
+
+    flagged_ids = {r.employee_id for r in items if r.employee_id}
+    normal_query = PayrollEmployee.query.filter_by(upload_id=upload.id)
+    if flagged_ids:
+        normal_query = normal_query.filter(~PayrollEmployee.id.in_(flagged_ids))
+    normal_employees = normal_query.order_by(PayrollEmployee.employee_name).all()
+
+    groups, unassigned = _group_by_employee(items, normal_employees)
+    buffer = build_results_excel(groups, unassigned)
     return send_file(
         buffer,
         as_attachment=True,
-        download_name=f"validation_result_{upload.payroll_year}_{upload.payroll_month:02d}.xlsx",
+        download_name=f"급여대장_검증결과_{upload.payroll_year}년_{upload.payroll_month:02d}월.xlsx",
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )

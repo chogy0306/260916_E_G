@@ -1,7 +1,7 @@
 from io import BytesIO
 
 from openpyxl import Workbook
-from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 from app.services.mapping_service import field_label
@@ -24,6 +24,9 @@ SEVERITY_COLORS = {
     "NORMAL": ("FFE9F7EF", "FF1F8A4E"),
 }
 RANK_TO_SEVERITY = ["ERROR", "WARNING", "REVIEW", "NORMAL"]
+
+_THIN_SIDE = Side(style="thin", color="FFB0AEAC")
+CELL_BORDER = Border(left=_THIN_SIDE, right=_THIN_SIDE, top=_THIN_SIDE, bottom=_THIN_SIDE)
 
 HEADERS = [
     "직원ID", "직원명", "부서", "검증항목", "등급", "전월값", "이번달값",
@@ -54,6 +57,7 @@ def _paint_row(ws, row, num_cols, bg, fg, bold):
     for col in range(1, num_cols + 1):
         cell = ws.cell(row=row, column=col)
         cell.fill = PatternFill("solid", fgColor=bg)
+        cell.border = CELL_BORDER
         if bold:
             cell.font = Font(bold=True, color=fg)
 
@@ -83,7 +87,8 @@ def _write_detail_row(ws, row, employee_id, employee_name, department, r):
         "; ".join(n.note for n in r.notes) if r.notes else "",
     ]
     for col, value in enumerate(values, start=1):
-        ws.cell(row=row, column=col, value=value)
+        cell = ws.cell(row=row, column=col, value=value)
+        cell.border = CELL_BORDER
 
     sev_bg, sev_fg = SEVERITY_COLORS.get(r.severity, ("FFFFFFFF", "FF000000"))
     sev_cell = ws.cell(row=row, column=5)

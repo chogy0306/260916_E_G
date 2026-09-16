@@ -1,28 +1,51 @@
 {% extends "base.html" %}
 {% block title %}로그인{% endblock %}
+{% block body_class %}login-body{% endblock %}
 {% block content %}
-<div class="login-wrapper">
-  <div class="login-card">
-    <div class="login-logo-row">
-      <img src="{{ url_for('static', filename='img/etners-logo.png') }}" alt="etners" class="login-logo-image" />
-      <span class="login-logo-divider"></span>
-      <span class="login-logo-product">급여대장 자동 검증</span>
-    </div>
-    <h2 class="login-heading">로그인</h2>
+<div class="login-page">
+  <div class="login-topbar">
+    <img src="{{ url_for('static', filename='img/etners-logo.png') }}" alt="etners" class="login-logo-image" />
+    <span class="login-logo-divider"></span>
+    <span class="login-logo-product">급여대장 자동 검증</span>
+  </div>
 
-    {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-    <form method="post">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <div class="mb-3">
-        <label class="form-label">아이디</label>
-        <input type="text" name="username" class="form-control" placeholder="아이디를 입력하세요" autofocus required />
+  <div class="login-center">
+    <div class="login-card">
+      <div class="login-icon-chip" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 3.5h7.5L18 7v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M14.5 3.5V7H18" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M8.5 12h7M8.5 15h7M8.5 18h4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
       </div>
-      <div class="mb-4">
-        <label class="form-label">비밀번호</label>
-        <input type="password" name="password" class="form-control" placeholder="비밀번호를 입력하세요" required />
-      </div>
-      <button type="submit" class="btn btn-primary w-100">로그인</button>
-    </form>
+
+      <h2 class="login-heading">계정으로 로그인</h2>
+      <p class="login-subtext">급여대장 자동 검증 시스템에 접속합니다</p>
+
+      {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="mb-3">
+          <label class="form-label">아이디</label>
+          <input type="text" name="username" class="form-control" placeholder="아이디를 입력하세요" autofocus required />
+        </div>
+        <div class="mb-4">
+          <label class="form-label">비밀번호</label>
+          <input type="password" name="password" class="form-control" placeholder="비밀번호를 입력하세요" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">로그인</button>
+      </form>
+
+      <p class="login-help">계정 문의는 <strong>시스템 관리자</strong>에게 문의하세요</p>
+    </div>
+  </div>
+
+  <div class="login-footer">
+    <span>© 2026 Etners Corp.</span>
+    <span class="login-footer-sep">|</span>
+    <span>개인정보처리방침</span>
+    <span class="login-footer-sep">|</span>
+    <span>이용약관</span>
   </div>
 </div>
 {% endblock %}

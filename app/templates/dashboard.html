@@ -65,7 +65,7 @@
       </td>
       <td class="text-nowrap">{{ r.employee.employee_name if r.employee else '-' }}</td>
       <td class="text-nowrap">{{ r.category }}</td>
-      <td><a href="{{ url_for('validation.detail', result_id=r.id) }}">{{ r.message }}</a></td>
+      <td><a href="{{ url_for('validation.detail', result_id=r.id) }}" style="white-space: pre-line;">{{ r.message }}</a></td>
     </tr>
     {% else %}
     <tr><td colspan="4" class="text-center text-muted">이상치가 없습니다.</td></tr>

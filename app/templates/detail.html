@@ -98,7 +98,7 @@
     <button type="submit" class="btn btn-primary">상태 변경</button>
   </form>
   {% else %}
-  <span class="badge bg-light text-dark border">{{ result.status|result_status_label }}</span>
+  <span class="status-pill status-{{ result.status|lower }}">{{ result.status|result_status_label }}</span>
   {% endif %}
 </div>
 

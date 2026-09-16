@@ -75,7 +75,7 @@
         <td class="text-end">{{ r.previous_value|commas }}</td>
         <td class="text-end">{{ r.current_value|commas }}</td>
         <td class="text-end">{{ '%.1f'|format(r.change_rate) + '%' if r.change_rate is not none else '-' }}</td>
-        <td><span class="status-pill">{{ r.status|result_status_label }}</span></td>
+        <td><span class="status-pill status-{{ r.status|lower }}">{{ r.status|result_status_label }}</span></td>
       </tr>
       {% endfor %}
     </tbody>
@@ -97,7 +97,7 @@
         <td><span class="severity-pill severity-{{ r.severity|lower }}"><span class="severity-dot severity-{{ r.severity|lower }}"></span>{{ r.severity|severity_label }}</span></td>
         <td><a href="{{ url_for('validation.detail', result_id=r.id) }}">{{ r.category }}</a></td>
         <td>{{ r.message }}</td>
-        <td><span class="status-pill">{{ r.status|result_status_label }}</span></td>
+        <td><span class="status-pill status-{{ r.status|lower }}">{{ r.status|result_status_label }}</span></td>
       </tr>
       {% endfor %}
     </tbody>

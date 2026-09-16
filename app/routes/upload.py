@@ -72,6 +72,19 @@ def new_upload():
     return render_template("upload.html", today=date.today())
 
 
+@upload_bp.route("/<int:upload_id>/delete", methods=["POST"])
+@login_required
+@admin_required
+def delete_upload(upload_id):
+    upload = PayrollUpload.query.get_or_404(upload_id)
+    period_label = upload.period_label
+    log_action(current_user.id, "DELETE_UPLOAD", "PayrollUpload", upload.id)
+    db.session.delete(upload)
+    db.session.commit()
+    flash(f"{period_label} 급여대장을 삭제했습니다.", "success")
+    return redirect(url_for("dashboard.index"))
+
+
 @upload_bp.route("/<int:upload_id>/mapping", methods=["GET", "POST"])
 @login_required
 @admin_required

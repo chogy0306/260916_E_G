@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.models.payroll_employee import PayrollEmployee
 from app.models.payroll_value import PayrollValue
-from app.services.mapping_service import IDENTITY_FIELDS
+from app.services.mapping_service import IDENTITY_FIELDS, field_label
 
 
 class ExcelValidationError(Exception):
@@ -54,18 +54,21 @@ def read_preview(file_bytes, n_rows=5):
 
 
 def _to_number(value):
+    """Returns (number_or_None, is_format_error). is_format_error is True only
+    when the cell had non-blank content that couldn't be read as a number -
+    a blank cell is just missing data, not a format error."""
     if value is None or value == "":
-        return None
+        return None, False
     if isinstance(value, (int, float)):
-        return float(value)
+        return float(value), False
     text = str(value).strip()
     text = re.sub(r"[,\s원₩]", "", text)
     if text in ("", "-"):
-        return None
+        return None, False
     try:
-        return float(text)
+        return float(text), False
     except ValueError:
-        return None
+        return None, True
 
 
 def parse_and_store(upload, mapping):
@@ -74,6 +77,7 @@ def parse_and_store(upload, mapping):
     df.columns = [str(c).strip() for c in df.columns]
 
     errors = []
+    format_errors = []
     created_employees = 0
 
     for idx, row in df.iterrows():
@@ -90,7 +94,12 @@ def parse_and_store(upload, mapping):
                 value = "" if raw is None else str(raw).strip()
                 identity[field] = value or None
             else:
-                items[field] = _to_number(raw)
+                value, is_format_error = _to_number(raw)
+                items[field] = value
+                if is_format_error:
+                    format_errors.append(
+                        f"{row_no}행: {field_label(field)} 값 '{raw}'을 숫자로 인식할 수 없어 빈 값으로 처리했습니다."
+                    )
 
         if not identity["employee_id"] or not identity["employee_name"]:
             errors.append(f"{row_no}행: 직원ID 또는 직원명이 비어 있습니다.")
@@ -118,4 +127,4 @@ def parse_and_store(upload, mapping):
             )
 
     db.session.commit()
-    return created_employees, errors
+    return created_employees, errors, format_errors

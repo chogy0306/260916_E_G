@@ -22,6 +22,8 @@ DEFAULT_RULES = [
     ("INSURANCE_RATE_HEALTH", "건강보험 요율(%, 기본급 대비)", 3.595, "REVIEW"),
     ("INSURANCE_RATE_LONG_TERM_CARE", "장기요양보험 요율(%, 건강보험료 대비)", 13.14, "REVIEW"),
     ("INSURANCE_RATE_EMPLOYMENT", "고용보험 요율(%, 기본급 대비)", 0.9, "REVIEW"),
+    ("ABS_MAX_TOTAL_EARNINGS", "총지급액 상한 기준(원)", 30000000, "REVIEW"),
+    ("ABS_MAX_NET_SALARY", "실지급액 상한 기준(원)", 25000000, "REVIEW"),
 ]
 
 
@@ -111,7 +113,7 @@ def run_validation(upload, previous_upload=None):
     findings = []
     findings += duplicate_validator.check(employees)
     findings += missing_validator.check(employees, values_by_employee)
-    findings += payroll_validator.check(employees, values_by_employee)
+    findings += payroll_validator.check(employees, values_by_employee, rules_by_code)
     findings += outlier_service.detect(employees, values_by_employee)
 
     new_ids, missing_ids = set(), set()

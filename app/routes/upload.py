@@ -114,9 +114,11 @@ def mapping(upload_id):
         upload.status = "MAPPED"
         db.session.commit()
 
-        created, errors = parse_and_store(upload, selected_mapping)
+        created, errors, format_errors = parse_and_store(upload, selected_mapping)
         for err in errors:
             flash(err, "error")
+        for warn in format_errors:
+            flash(warn, "error")
         flash(f"{created}명의 직원 데이터를 저장했습니다.", "success")
 
         return redirect(url_for("upload.select_previous", upload_id=upload.id))

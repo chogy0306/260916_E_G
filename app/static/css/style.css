@@ -118,6 +118,12 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 2px;
 }
 
+.stat-subtext {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
 /* Employee-grouped results */
 
 .employee-group {

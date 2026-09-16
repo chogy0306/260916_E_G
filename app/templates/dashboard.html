@@ -43,6 +43,12 @@
     <div class="stat-card stat-neutral">
       <div class="stat-label">직원수</div>
       <div class="stat-value">{{ summary.total_employees }}<span class="stat-unit">명</span></div>
+      {% if employee_change %}
+      <div class="stat-subtext">
+        {{ employee_change.previous_label }} 대비 {{ '%+d'|format(employee_change.delta) }}명
+        (신규 {{ employee_change.new_count }}명, 퇴사/누락 {{ employee_change.missing_count }}명)
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

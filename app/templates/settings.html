@@ -3,7 +3,7 @@
 {% block content %}
 <h2 class="mb-4">검증 기준 설정</h2>
 <table class="table bg-white">
-  <thead><tr><th>기준명</th><th>임계값(%)</th><th>등급</th><th>활성화</th><th></th></tr></thead>
+  <thead><tr><th>기준명</th><th>임계값</th><th>등급</th><th>활성화</th><th></th></tr></thead>
   <tbody>
     {% for rule in rules %}
     <form id="rule-form-{{ rule.id }}" method="post" action="{{ url_for('settings.update_rule', rule_id=rule.id) }}"></form>
